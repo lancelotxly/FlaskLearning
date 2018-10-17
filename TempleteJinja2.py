@@ -77,13 +77,30 @@ Static file: image, javascript, css--> saved in static.dir
              1. generate file url:
                 {{url_for('static', filename='name.type')}}
              2. load resources according to url
+
+Moment: Translate UTC(Server) into local time(Client)
+        1. Flask expansion
+           from flask_moment import Moment
+           moment = Moment(app)
+        2. insert moment.js into Jinjia2
+           {% block scripts %}
+           {{ super() }}
+           {{ moment.include_moment()}}
+           {% endblock%}
+        3. generate new .html to translate UTC into local time
+           <p>The local date and time is {{ moment(utc).format('LLL')}}</p>
 '''
+
 from flask import Flask, render_template, request
-from flask_bootstrap import Bootstrap
+from flask_bootstrap import Bootstrap   # Flask-Bootstrap: a Client framework used to design Web page
+from flask_moment import Moment         # Flask-Moment: Translate UTC(Server) into local time(Client)
+from datetime import datetime           # datetime.utcnow(): UTC time
 
 app = Flask(__name__)
 
 bootstrap = Bootstrap(app)
+moment = Moment(app)
+
 
 # Bootstrap
 @app.route('/user/<name>',methods=['GET', 'POST'])
@@ -97,6 +114,11 @@ error 404:   errorhandler(exception code)
 @app.errorhandler(404)
 def page_not_found(e):
    return render_template('404.html'), 404
+
+# moment
+@app.route('/moment',methods=['GET','POST'])
+def moment():
+    return render_template('moment.html', current_time = datetime.utcnow())
 
 # login and check out
 @app.route('/',methods=['GET','POST'])
