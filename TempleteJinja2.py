@@ -1,5 +1,5 @@
 '''
-Template: Generally speaking, its a .html file which includes
+Template: Generally speaking, it's a .html file which includes
           {{variable}}  variable could be: list dict object
                         and can use filter to transform variable, e.g {{ variable | filter }}
           and controller {% %}:
@@ -68,6 +68,15 @@ render:  according to template and variable, create .html file
 Bootstrap: a Client framework used to design Web page
            1. from flask_bootstrap import Bootstrap  # Flask extension
            2. bootstrap = Bootstrap(app)
+
+generate url in template:  url_for()
+                           e.g.  {{url_for('home', _external=True)}}  # 'http://localhost:5000/'
+                            or   {{url_for('home')}}  # '/'
+
+Static file: image, javascript, css--> saved in static.dir
+             1. generate file url:
+                {{url_for('static', filename='name.type')}}
+             2. load resources according to url
 '''
 from flask import Flask, render_template, request
 from flask_bootstrap import Bootstrap
@@ -76,9 +85,23 @@ app = Flask(__name__)
 
 bootstrap = Bootstrap(app)
 
+# Bootstrap
+@app.route('/user/<name>',methods=['GET', 'POST'])
+def user(name):
+    return render_template('user.html', name = name)
+
+# error
+'''
+error 404:   errorhandler(exception code)
+'''
+@app.errorhandler(404)
+def page_not_found(e):
+   return render_template('404.html'), 404
+
+# login and check out
 @app.route('/',methods=['GET','POST'])
 def home():
-    return render_template('user.html')
+    return render_template('home.html')
 
 @app.route('/signin', methods=['GET', ])
 def form():
@@ -92,6 +115,7 @@ def sinin():
     if username == 'xzq' and password == 'Cindy':
         return render_template('signin_ok.html', username = username)
     return render_template('form.html', message = 'Bad username or password', username = username)
+
 
 if __name__ == "__main__":
     app.run()
