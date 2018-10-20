@@ -1,6 +1,7 @@
 '''
 sqlite, mysql, sql, mysql-python-connector, orm(SQLAlchemy)
 '''
+
 '''
 sqlite:  # mostly in ios/android app
       operation flow:
@@ -106,7 +107,11 @@ ORM: Object-Relational Mapping   # user table<-->ORM<--> User('1','xzq')
      sqlalchemy is a ORM framework, by using 'Session' complete the information exchanges between 'table' and 'Object'
      Flow:
      1. Create database link (named 'engine'), and based on this create a 'Session'
+       # mysql
        engine = create_engine('DatabaseType+Driver://user:password@host:port/Database')
+       # sqlite
+       engine = create_engine('sqlite:///path+database.db')
+       
        DBSession = sessionmaker(bind = engine)
      2. Define our object('table') by inheriting from the determined 'Base' class
        Base = declarative_base()
@@ -158,7 +163,7 @@ class User(Base):
 # create 'Session' object:
 session = DBSession()
 # create 'User' object:
-new_user = User(id='6', name='Bob')
+new_user = User(id='2', name='Bob')
 # add into 'Session':
 session.add(new_user)
 # 'Session' commit to the database:
