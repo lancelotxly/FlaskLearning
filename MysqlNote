@@ -127,3 +127,13 @@ sql基础：
               SELECT col_1,col_2,... FROM table_A LEFT JOIN table_B ON table_A.no=table_B.no			
 			2) right join # 右边包含多余项
 			  SELECT col_1,col_2,... from table_A RIGHT JOIN table_B ON table_A.no=table_B.no			
+          
+		  7. 子查询
+		     查询条件与另一个select语句结果有关。e.g in, not in, =, !=, exist, not exist
+			 e.g. SELECT col_1,... FROM table_A where table_A.no in(SELECT col_1,.. from table_B);
+			 子查询和表连接可以相互转化，表连接优于子查询
+
+          8. 联合
+             选出两表中的项(一般时共同项)合并。
+             SELECT col_1,... FROM table_A UNION(# 去重)/ UNION ALL SELECT col_1,... FROM table_B UNION/UNION ALL.....			 
+		  
