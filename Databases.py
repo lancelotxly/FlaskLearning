@@ -2,6 +2,7 @@
 sqlite, mysql, sql, mysql-python-connector, orm(SQLAlchemy)
 '''
 
+
 '''
 sqlite:  # mostly in ios/android app
       operation flow:
@@ -38,7 +39,6 @@ sqlite:  # mostly in ios/android app
 # conn.commit()
 #
 # conn.close()
-
 
 '''
 mysql:  # create workspace
@@ -101,7 +101,6 @@ mysql:  # create workspace
 #
 # conn.close()
 
-
 '''
 ORM: Object-Relational Mapping   # user table<-->ORM<--> User('1','xzq')
      sqlalchemy is a ORM framework, by using 'Session' complete the information exchanges between 'table' and 'Object'
@@ -135,47 +134,79 @@ ORM: Object-Relational Mapping   # user table<-->ORM<--> User('1','xzq')
        value = matable.value
        session.close()
 '''
-# import sqlalchemy:
+# # import sqlalchemy:
+# from sqlalchemy import Column, String, create_engine
+# from sqlalchemy.orm import sessionmaker, relationship
+# from sqlalchemy.ext.declarative import declarative_base
+#
+# # create database link: 'DatabaseType+Driver://user:password@host:port/Database'
+# engine = create_engine('mysql+mysqlconnector://root:123456@localhost:3306/test')
+# # based on the database, build a 'Session':
+# DBSession = sessionmaker(bind=engine)
+#
+# # Base class of Object:
+# Base = declarative_base()
+#
+# # define our object of table:
+# class User(Base):
+#     # table name:
+#     __tablename__ = 'user'
+#
+#     # table structure:
+#     id = Column(String(20), primary_key=True) # primary key
+#     name = Column(String(20))
+#     # book = relationship('Book')  # foreign key
+#
+#
+#
+# # create 'Session' object:
+# session = DBSession()
+# # create 'User' object:
+# new_user = User(id='2', name='Bob')
+# # add into 'Session':
+# session.add(new_user)
+# # 'Session' commit to the database:
+# session.commit()
+# # close 'Session':
+# session.close()
+#
+#
+# session = DBSession()
+# # Query， 'filter' like 'where condition', 'one()' return the only one line, 'all()' return all lines include 'condition':
+# user = session.query(User).filter(User.id=='5').one()
+# # get the information of 'table' by using 'User' object:
+# print('type:', type(user))
+# print('name:', user.name)
+# session.close()
+
+import os
 from sqlalchemy import Column, String, create_engine
 from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base
 
-# create database link: 'DatabaseType+Driver://user:password@host:port/Database'
-engine = create_engine('mysql+mysqlconnector://root:123456@localhost:3306/test')
-# based on the database, build a 'Session':
-DBSession = sessionmaker(bind=engine)
+basedir = os.path.abspath(os.path.dirname(__file__))
+engine = create_engine('sqlite:///'+os.path.join(basedir,'test.db'))
+DBSession = sessionmaker(engine)
 
-# Base class of Object:
 Base = declarative_base()
 
-# define our object of table:
 class User(Base):
-    # table name:
     __tablename__ = 'user'
-
-    # table structure:
-    id = Column(String(20), primary_key=True) # primary key
+    id = Column(String(20), primary_key=True)
     name = Column(String(20))
-    # book = relationship('Book')  # foreign key
 
+class Book(Base):
+    __tablename__  = "book"
+    id = Column(String(20), primary_key=True)
+    book_name = Column(String(20))
 
-
-# create 'Session' object:
+new_user = User(id='6',name='xzq')
+new_book = Book(id='1',book_name='Cindy')
 session = DBSession()
-# create 'User' object:
-new_user = User(id='2', name='Bob')
-# add into 'Session':
-session.add(new_user)
-# 'Session' commit to the database:
+session.add_all([new_user,])
 session.commit()
-# close 'Session':
 session.close()
 
-# 创建Session:
 session = DBSession()
-# Query， 'filter' like 'where condition', 'one()' return the only one line, 'all()' return all lines include 'condition':
-user = session.query(User).filter(User.id=='5').one()
-# get the information of 'table' by using 'User' object:
-print('type:', type(user))
-print('name:', user.name)
-session.close()
+user = session.query(User).filter(User.id == '1').one()
+print(user.name)
