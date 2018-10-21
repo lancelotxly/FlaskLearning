@@ -47,3 +47,83 @@ alter table user rename to student;
 
 清空表
 truncate table user;
+
+
+-******************************************************************************-
+sql基础：
+      1. 分类
+         DDL(Data Definition Language): 定义了不同的数据段、数据库、表、列、索引等数据库对象的定义
+                                        create, drop, alter
+                                        DDL 是对数据库内部的对象进行增，删，改
+         DML(Data Manipulation Language): 增删改查
+                                         insert, delete, update, select
+                                         DML 只是对表内部数据的操作，而不涉及到表的定义、结构的修改，更不会涉及到其他对象
+         DCL(Data Control Language): 定义了数据库、表、字段、用户的访问权限和安全级别
+                                     grant, revoke
+
+
+      DDL: 针对数据库，表以及字段的操作
+             1.创建数据库
+               CREATE DATABASE dbname;
+               USE dbname; # 使用 'dbname'数据库
+               SHOW tables; # 获取 'dbname'中的表
+             2.删除数据库
+               DROP DATABASE dbname;
+
+             # column_define = column_name column_type constraint
+             3.创建表
+               CREATE TABLE IF NOT EXIST table_name(column_define_1,...column_define_N);
+               DESC table_name; # 查看表
+               SHOW CREATE TABLE table_name # 查看创建过程, 包括sql语句, 使用的engine和charset
+             4.删除表
+               DROP TABLE table_name;
+             5.修改表
+               # 字段
+               1) 修改一个字段
+               ALTER TABLE table_name MODIFY COLUMN column_name column_type constraint(可缺省)
+               2) 字段重写
+               ALTER TABLE table_name CHANGE COLUMN column_name column_define;
+               3) 增加一个字段
+               ALTER TABLE table_name ADD COLUMN column_define column_name;  # 尾插
+               ALTER TABLE table_name ADD COLUMN column_define AFTER column_name;  # column_name后插
+               ALTER TABLE table_name ADD COLUMN column_define FIRST;  # 头插
+               *****
+			   ALTER TABLE table_name [MODIFY/ADD/CHANGE] col_name column_define
+			   4) 删除一个字段
+               ALTER TABLE table_name DROP COLUMN column_name;
+               # 修改表
+               ALTER TABLE table_name RENAME new_name;
+
+      DML: 针对具体每个数据的操作
+          1. 增加
+             INSERT INTO table_name (col_name1, col_nam2,...) VALUES (value_A1,value_A2,...),(value_B1,value_B2,...)
+             # col_name 和 (value1,...) 视情况皆可缺省
+
+          2. 更改
+             UPDATE table_name_a as a,... SET a.col_name=value WHERE CONDITION1,...
+
+          3. 删除
+             DELETE FROM table_name WHERE CONDITION;
+
+          4. 查询
+			 SELECT [DISTINCT] col_name1,... FROM table_name [ORDER BY] col_nam [DESC/ASC][LIMIT start,row_count] WHERE [CONDITION1,...]
+          
+		  5. 聚合
+             SELECT [col_name1,...] fun_name(col_name1),fun_name(col_2),... FROM table_name [WHERE CONDITION1 AND CONDITION2,,] [GROUP BY col_name1,col_name2..[WITH ROLLUP]][HAVING CONDITION1,,,];
+			 1) [GROUP BY col_name1,col_name2..[WITH ROLLUP]]将表按col_1,,,col_n聚在一起  (可缺省，缺省时按整张原表聚合)
+			 2）SELECT [col_name1,...] fun_name(col_name) 提取col_1,,,col_n，并计算fun_name(col_name),合为一张表展现 ([col_1,,,,]可缺省，缺省时只展现fun_name(col_1),...)
+             3）[WITH ROLLUP]] 对聚合后 fun_name(col_name)结果再汇总 (可缺省)
+			 4）[HAVING CONDITION1],, 对合成的表再根据CONDITION1,,,展现 (可缺省)
+			 # fun_name :  count(col_1) # 计数
+			               sum(col_1) # 求和
+						   max(col_1)/min(col_1) # 最大最小
+			 
+			 
+		  6.连接
+            内连接: 选出两表互相匹配的内容 
+			  SELECT col_1,col_2,... FROM table_A, table_B WHERE table_A.no=table_B.no	
+            外连接：
+			1) left join  # 左边包含多余项
+              SELECT col_1,col_2,... FROM table_A LEFT JOIN table_B ON table_A.no=table_B.no			
+			2) right join # 右边包含多余项
+			  SELECT col_1,col_2,... from table_A RIGHT JOIN table_B ON table_A.no=table_B.no			
