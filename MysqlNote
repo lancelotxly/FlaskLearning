@@ -7,10 +7,10 @@
 
 
 数据类型：数值，时间，字符串
-数值： INT(4), DOUBLE(8)
+数值： INT # 4, DOUBLE # 8
 时间： DATE(YYYY-MM-DD), TIME(HH:MM:SS), YEAR(YYYY), DATETIME(YYYY-MM-DD HH:MM:SS)
 字符串： VARCHAR(max) # 变长
-        UTF-8 (3), GBK(2)
+        UTF-8 # 3, GBK # 2
 
 创建、删除、选择数据库
 create database test;
@@ -71,6 +71,12 @@ sql基础：
                DROP DATABASE dbname;
 
              # column_define = column_name column_type constraint
+             col_type: 数据类型
+                       数值： INT # 4字节, DOUBLE(M,D) # 8字节, (M,D)可选, M 数据总长, D 小数位总长
+                       时间： DATETIME(YYYY-MM-DD HH:MM:SS), DATE(YYYY-MM-DD), TIME(HH:MM:SS), YEAR(YYYY),
+                       字符串： VARCHAR(max) # 变长
+                               UTF-8 # 3, GBK # 2
+             constraint: primary key, unique, not null, index
              3.创建表
                CREATE TABLE IF NOT EXIST table_name(column_define_1,...column_define_N);
                DESC table_name; # 查看表
@@ -136,4 +142,43 @@ sql基础：
           8. 联合
              选出两表中的项(一般时共同项)合并。
              SELECT col_1,... FROM table_A UNION(# 去重)/ UNION ALL SELECT col_1,... FROM table_B UNION/UNION ALL.....			 
-		  
+
+
+
+	  运算符： 算法运算符 +, -, *, /, %
+	         比较运算符 =, !=, <, >, >=, <=, BETWEEN, IN, LIKE(# 通用字符匹配), RLIKE(# 正则表达式匹配)
+	                  BETWEEN:  a BETWEEN min AND max, 当 min<=a<=max 返回1， 否则返回0
+	                  IN:    a IN (set) 当 a\in set 返回1， 否则返回0
+	                  LIKE:  a LIKE %123% 当a 中包含 ‘123’ 返回1, 否则返回0
+
+	         逻辑运算  &&, ||, !
+
+
+	  函数:  字符串函数
+	        cancat(s1,s2,...)  # 's1+s2,...' 连接字符串
+	        insert(str,x,y,instr) # str第x~x+y, 替换为instr
+	        replace(str,a,b) # 替换所有a为b
+	        substring(str,x,y) # 取子串x~x+y
+	        ltrim(str) # 去左空格
+	        rtrim(str) # 去右空格
+	        trim(str)  # 去左右空格
+
+	        数值函数
+	        abs(x), truncate(x,y) # 截断x,取y位小数
+
+	        流程函数:
+	        IF(condition,t,f) # 如果condition成立 返回t, 否则返回f
+	        IF(a,b)  # 如果a=null, 返回b
+	        CASE WHEN condition THEN result1 ELSE result2 END # if..else..
+
+
+
+Mysql Engine: MyISAM, InnoDB(仅其支持事物和外键), Memory, Merge
+            事务: 主要用于处理操作量大，复杂度高的数据。
+                 比如说，在人员管理系统中，你删除一个人员，你即需要删除人员的基本资料，也要删除和该人员相关的信息，如信箱，文章等等，这样，这些数据库操作语句就构成一个事务
+                 事物必须满足:ACID(Atomicity, Consistency, Isolation, Durability)
+                           Atomicity: 一个事务（transaction）中的所有操作，要么全部完成，要么全部不完成，不会结束在中间某个环节。
+                                      事务在执行过程中发生错误，会被回滚（Rollback）到事务开始前的状态，就像这个事务从来没有执行过一样.
+                           Consistency: 在事务开始之前和事务结束以后，数据库的完整性没有被破坏.
+                           Isolation: 数据库允许多个并发事务同时对其数据进行读写和修改的能力，隔离性可以防止多个事务并发执行时由于交叉执行而导致数据的不一致
+                           Durability: 事务处理结束后，对数据的修改就是永久的，即便系统故障也不会丢失
