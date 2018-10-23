@@ -93,6 +93,9 @@ sql基础：
                ALTER TABLE table_name ADD COLUMN column_define column_name;  # 尾插
                ALTER TABLE table_name ADD COLUMN column_define AFTER column_name;  # column_name后插
                ALTER TABLE table_name ADD COLUMN column_define FIRST;  # 头插
+
+               # 增加一个外键
+               ALTER TABLE child-table_name ADD CONSTRAINT col_fk FOREIGN KEY (child.col) REFERENCES father_name (father.col);
                *****
 			   ALTER TABLE table_name [MODIFY/ADD/CHANGE] col_name column_define
 			   4) 删除一个字段
@@ -182,3 +185,43 @@ Mysql Engine: MyISAM, InnoDB(仅其支持事物和外键), Memory, Merge
                            Consistency: 在事务开始之前和事务结束以后，数据库的完整性没有被破坏.
                            Isolation: 数据库允许多个并发事务同时对其数据进行读写和修改的能力，隔离性可以防止多个事务并发执行时由于交叉执行而导致数据的不一致
                            Durability: 事务处理结束后，对数据的修改就是永久的，即便系统故障也不会丢失
+
+
+            外键约束:  类似于函数解耦，例如要创立一张表，来记录学生的个人信息和成绩，就会显得冗余;
+                     利用外键约束可以创建一张父表来记录学生的信息, 再创建一张子表(包含父表的外键，即子表中指向父表主键的字段)来记录成绩
+                     创建要求:   1. 子表的非主键-->父表的唯一键（或主键）
+                               2. 该非主键为父表的外键
+                     语法:
+                           create table Student(id int primary key, name varchar(20));  # 父表
+                           create table Score(id int, score int,
+                           constraint id_fk foreign key (score.id) references Student(Student.id)
+                           on update cascade   # [update/delete] cascade 父表更新/删除时，子表对应更新删除
+                           on delete restrict  # [delete] restrict 父表删除时， 子表有对应记录不允许删除
+                           );
+
+                      # 增加一个外键
+                     ALTER TABLE child-table_name ADD
+                     CONSTRAINT col_fk FOREIGN KEY (child.col) REFERENCES father_name (father.col);
+
+                     约束:  1. 父表删除某个id, 必须保证子表没有引用该id
+                           2. 子表插入某id，必须保证父表中有该id
+                           3. 子表id必须与父表id 类型相同
+                           4. 父表的外键必须是唯一键
+
+                     # 外键仅仅是保证数据的正确性，不能为增删改查提供帮助
+
+
+            设置Engine:  CREATE TABLE table_name (...) ENGINE=[MyISAM/InnoDB/Memory/Merge]
+
+                      MyISAM: 不支持事物，不支持外键，访问快
+                              静态表存储， 占中空间多，但易于数据恢复
+                              适合read, insert, 少update, delete
+
+                      InnoDB: 支持事物，外键，共享表空间存储（或 多表空间存储，表结构存储，数据和索引单独保存）
+                             处理事物，并发
+
+                      Memory: 使用内存创建表，HASH索引，数据易丢失
+                              常用于更新不太频繁的小表，用以快速得到访问结果
+
+
+
