@@ -76,7 +76,59 @@ sql基础：
                        时间： DATETIME(YYYY-MM-DD HH:MM:SS), DATE(YYYY-MM-DD), TIME(HH:MM:SS), YEAR(YYYY),
                        字符串： VARCHAR(max) # 变长
                                UTF-8 # 3, GBK # 2
-             constraint: primary key, unique, not null, index
+             constraint: primary key(唯一且不为空，一个表只能有一个主键),
+                         unique(唯一可为空)
+                         not null
+             Foreign key:  类似于函数解耦，例如要创立一张表，来记录学生的个人信息和成绩，就会显得冗余;
+                           利用外键约束可以创建一张父表来记录学生的信息, 再创建一张子表(包含父表的外键，即子表中指向父表主键的字段)来记录成绩
+                           创建要求:   1. 子表的非主键-->父表的唯一键（或主键）
+                                      2. 该非主键为父表的外键
+                           语法:
+                           CREATE TABLE Student(id int primary key, name varchar(20));  # 父表
+                           CREATE TABLE Score(id int, score int,
+                           CONSTRAINT id_fk Foreign key (score.id) References Student(Student.id)
+                           on update cascade   # [update/delete] cascade 父表更新/删除时，子表对应更新删除
+                           on delete restrict  # [delete] restrict 父表删除时， 子表有对应记录不允许删除
+                           );
+
+                           # 增加一个外键
+                           ALTER TABLE child-table_name ADD
+                           CONSTRAINT col_fk FOREIGN KEY (child.col) REFERENCES father_name (father.col);
+
+                           约束:  1. 父表删除某个id, 必须保证子表没有引用该id
+                                 2. 子表插入某id，必须保证父表中有该id
+                                 3. 子表id必须与父表id 类型相同
+                                 4. 父表的外键必须是唯一键
+
+                           # 外键仅仅是保证数据的正确性，不能为增删改查提供帮助
+
+             Index:   没有索引查询会变的非常缓慢, InnoDB 索引类型为BTREE INDEX
+                  索引类型:
+                       1.普通/(唯一)索引  # 主键索引即 primary key
+                       # 创建
+                       CREATE TABLE Student (id int(3) primary key, name varchar(20),
+                       [UNIQUE] INDEX (name(20))
+                       );
+                       # 增加/删除
+                       ALERT TABLE Student ADD INDEX(name(20));
+                       ALERT TABLE Student DROP INDEX name;
+
+                       2. 组合索引
+                       CREATE TABLE Student (id int(3), name varchar(20), age int(3),
+                       INDEX(id,name,age);
+                       )
+                       相当于创建了 id,name,age;  id,name;  id,age; id的索引
+
+                  索引设计原则:
+                       1. 最适合的索引列, 出现在WHERE中和连接句子中的列
+                       2. 使用唯一索引，索引列的基数越大，索引效果越好，因此往往用unique列做索引
+                       3. 使用短索引，尽量缩短index(col(length))的length
+                       4. 使用组合索引
+
+             InnoDB创建表时，保存顺序: 1. 按主键顺序保存
+                                   2.  没有主键按唯一索引保存
+                                   3. 没有主键且没有唯一索引，会生成的一个内部列， 按内部列顺序保存
+                     # 因此，InnoDB尽量自己指定主键, 且选用常访问的唯一列作为主键
              3.创建表
                CREATE TABLE IF NOT EXIST table_name(column_define_1,...column_define_N);
                DESC table_name; # 查看表
@@ -148,7 +200,7 @@ sql基础：
 
 
 
-	  运算符： 算法运算符 +, -, *, /, %
+      运算符： 算法运算符 +, -, *, /, %
 	         比较运算符 =, !=, <, >, >=, <=, BETWEEN, IN, LIKE(# 通用字符匹配), RLIKE(# 正则表达式匹配)
 	                  BETWEEN:  a BETWEEN min AND max, 当 min<=a<=max 返回1， 否则返回0
 	                  IN:    a IN (set) 当 a\in set 返回1， 否则返回0
@@ -174,8 +226,6 @@ sql基础：
 	        IF(a,b)  # 如果a=null, 返回b
 	        CASE WHEN condition THEN result1 ELSE result2 END # if..else..
 
-
-
 Mysql Engine: MyISAM, InnoDB(仅其支持事物和外键), Memory, Merge
             事务: 主要用于处理操作量大，复杂度高的数据。
                  比如说，在人员管理系统中，你删除一个人员，你即需要删除人员的基本资料，也要删除和该人员相关的信息，如信箱，文章等等，这样，这些数据库操作语句就构成一个事务
@@ -185,30 +235,6 @@ Mysql Engine: MyISAM, InnoDB(仅其支持事物和外键), Memory, Merge
                            Consistency: 在事务开始之前和事务结束以后，数据库的完整性没有被破坏.
                            Isolation: 数据库允许多个并发事务同时对其数据进行读写和修改的能力，隔离性可以防止多个事务并发执行时由于交叉执行而导致数据的不一致
                            Durability: 事务处理结束后，对数据的修改就是永久的，即便系统故障也不会丢失
-
-
-            外键约束:  类似于函数解耦，例如要创立一张表，来记录学生的个人信息和成绩，就会显得冗余;
-                     利用外键约束可以创建一张父表来记录学生的信息, 再创建一张子表(包含父表的外键，即子表中指向父表主键的字段)来记录成绩
-                     创建要求:   1. 子表的非主键-->父表的唯一键（或主键）
-                               2. 该非主键为父表的外键
-                     语法:
-                           create table Student(id int primary key, name varchar(20));  # 父表
-                           create table Score(id int, score int,
-                           constraint id_fk foreign key (score.id) references Student(Student.id)
-                           on update cascade   # [update/delete] cascade 父表更新/删除时，子表对应更新删除
-                           on delete restrict  # [delete] restrict 父表删除时， 子表有对应记录不允许删除
-                           );
-
-                      # 增加一个外键
-                     ALTER TABLE child-table_name ADD
-                     CONSTRAINT col_fk FOREIGN KEY (child.col) REFERENCES father_name (father.col);
-
-                     约束:  1. 父表删除某个id, 必须保证子表没有引用该id
-                           2. 子表插入某id，必须保证父表中有该id
-                           3. 子表id必须与父表id 类型相同
-                           4. 父表的外键必须是唯一键
-
-                     # 外键仅仅是保证数据的正确性，不能为增删改查提供帮助
 
 
             设置Engine:  CREATE TABLE table_name (...) ENGINE=[MyISAM/InnoDB/Memory/Merge]
