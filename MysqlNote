@@ -155,6 +155,9 @@ sql基础：
                # 修改表
                ALTER TABLE table_name RENAME new_name;
 
+
+
+
       DML: 针对具体每个数据的操作
           1. 增加
              INSERT INTO table_name (col_name1, col_nam2,...) VALUES (value_A1,value_A2,...),(value_B1,value_B2,...)
@@ -198,6 +201,27 @@ sql基础：
              选出两表中的项(一般时共同项)合并。
              SELECT col_1,... FROM table_A UNION(# 去重)/ UNION ALL SELECT col_1,... FROM table_B UNION/UNION ALL.....			 
 
+      视图: 对select语句的封装， 将select出来的列做成一张虚拟的表
+                   1. 创建视图
+                   CREATE VIEW view_name AS
+                   SELECT col_1,... FROM table_name WHERE CONDITIONS   # select 语句
+                   [WITH [CASCADED/LOCAL] CHECK OPTION]
+                   创建要求: 1. 不能聚合GROUP BY, HAVING
+                               不能去重DISTINCT
+                           2. 不能包含子查询
+                           3. 视图可以嵌套,即
+                           CREATE VIEW view_name2 AS SELECT col_1,.. FROM view_name WHERE CONDITIONS
+                           但不能FROM一个不能更新的视图
+                   WITH CASCADED CHECK OPTION 更新视图时，所有嵌套的子视图的条件都要满足
+                   WITH LOCAL CHECK OPTION 更新视图时，只需要满足当前子视图的条件
+
+                   2. 修改视图
+                   ALTER VIEW view_name (col_1,..all) AS
+                   SELECT FROM col_1,.. FROM table/view WHERE CONDITIONS;
+
+                   3. 删除视图
+                   DROP VIEW view_name;
+
 
 
       运算符： 算法运算符 +, -, *, /, %
@@ -225,6 +249,10 @@ sql基础：
 	        IF(condition,t,f) # 如果condition成立 返回t, 否则返回f
 	        IF(a,b)  # 如果a=null, 返回b
 	        CASE WHEN condition THEN result1 ELSE result2 END # if..else..
+
+
+
+
 
 Mysql Engine: MyISAM, InnoDB(仅其支持事物和外键), Memory, Merge
             事务: 主要用于处理操作量大，复杂度高的数据。
