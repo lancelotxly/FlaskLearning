@@ -55,35 +55,35 @@ mysql:  # create workspace
             cursor.close()
             conn.close()
 '''
-# import mysql.connector
-#
-# config = {
-#     'host': '127.0.0.1',
-#     'port': 3306,
-#     'user': 'root',
-#     'password': '123456',
-#     'database': 'test'
-# }
-# try:
-#     conn = mysql.connector.connect(**config)
-#     cursor = conn.cursor()
-#     sql_create_table = 'create table if not exists user (id INT(3) primary key, name varchar(20) not null)'
-#     cursor.execute(sql_create_table)
-#     conn.commit()
-#
-#     id = 6
-#     name = 'xzq'
-#     sql_insert = 'insert into user (id, name) values (%s, %s)'
-#     cursor.execute(sql_insert, [id, name])
-#     conn.commit()
-#
-#     sql_query = 'select * from user'
-#     cursor.execute(sql_query)
-#     values = cursor.fetchall()
-#     print(values)
-# finally:
-#     cursor.close()
-#     conn.close()
+import mysql.connector
+
+config = {
+    'host': '127.0.0.1',
+    'port': 3306,
+    'user': 'root',
+    'password': '123456',
+    'database': 'test'
+}
+try:
+    conn = mysql.connector.connect(**config)
+    cursor = conn.cursor()
+    sql_create_table = 'create table if not exists user (id INT(3) primary key, name varchar(20) not null)'
+    cursor.execute(sql_create_table)
+    conn.commit()
+
+    id = 6
+    name = 'xzq'
+    sql_insert = 'insert into user (id, name) values (%s, %s)'
+    cursor.execute(sql_insert, [id, name])
+    conn.commit()
+
+    sql_query = 'select * from user'
+    cursor.execute(sql_query)
+    values = cursor.fetchall()
+    print(values)
+finally:
+    cursor.close()
+    conn.close()
 
 '''
 sqlite:  # mostly in ios/android app
