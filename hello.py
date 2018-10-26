@@ -9,7 +9,6 @@ from flask import Flask, request, redirect, abort, make_response
 
 app = Flask(__name__)
 
-
 '''
 2. Route and view function:  # route includes url and method
                              @app.route('/url', methods=['GET', 'POST'])  # GET: only request source;   POST: post user form and request source
@@ -24,25 +23,30 @@ app = Flask(__name__)
                                  
                              Status Code:  200 successfully; 302 redirect; 404 not found
 '''
+# normal
 @app.route('/user/<name>', methods=['GET',])
 def user(name):
     return '<h1>Hello, %s</h1>' % name
 
+# request the information of Request send by Client
 @app.route('/request',methods=['GET',])
 def index():
     user_agent = request.headers.get('User-Agent')
     return '<h1>Your browser is %s</h1>' % user_agent
 
+# redirect: just return a /url
 @app.route('/',methods=['GET','POST'])
 def home():
     return redirect('www.bilibili.com')
 
+# abort 404
 @app.route('/user',methods=['GET'])
 def nofound():
     if not user:
         abort(404)
     return '<h1>Hello</h1>'
 
+# make_response
 @app.route('/Cindy',methods=['GET'])
 def Cindy():
     body = '<h1>I love you</h1>'
@@ -52,7 +56,8 @@ def Cindy():
     return response
 '''
 3. Start the flask server:   if __name__ == "__main__"  # makes sure only when this .py run, the server will be started
-                                  app.run()       # can make some config to the server
+                                  app.run('host',port)       # can make some config to the server
+                                                  
 '''
 if __name__ == "__main__":
-    app.run()
+    app.run()  # default: 127.0.0.1:5000

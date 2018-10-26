@@ -93,7 +93,7 @@ def index3():
 
 
 '''
-flash: flash('information') # to let user know that the status is changed.k
+flash: flash('information') # to let user know that the status is changed.
        template:  {% for message in get_flashed_message()%}  # get information of flashed
                   {{ message}}
                   {% endfor %}

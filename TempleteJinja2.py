@@ -2,11 +2,14 @@
 Template: Generally speaking, it's a .html file which includes
           {{variable}}  variable could be: list dict object
                         and can use filter to transform variable, e.g {{ variable | filter }}
-          and controller {% %}:
+          controller {% %}:
           {%if %}--{% endif %}; {%for in in list%}--{% endfor %}; {% for key, value in dict.iteritems()%}--{% endfor %}
           # and template must saved in 'templates.dir'
 
-Jinjia2: like the frameworks of Web， there are many frameworks of templete,
+Jinjia2: python can be used in .html files directly by import Jinja2
+
+
+         like the frameworks of Web， there are many frameworks of templete,
          and different template has different controller
          1. controller
          # if-elif-else
@@ -32,7 +35,7 @@ Jinjia2: like the frameworks of Web， there are many frameworks of templete,
          2. macro (function)
          {% macro render_comment(comment) %}
                  pass
-         {% endmacro%}
+         {% endmacro %}
 
          3. modules:
          {% import 'module.html' as module %}
@@ -65,7 +68,7 @@ Jinjia2: like the frameworks of Web， there are many frameworks of templete,
 render:  according to template and variable, create .html file
          render_template('view.html', variable = value)
 
-generate url in template:  url_for()
+generate url in template:  url_for()   #
                            e.g.  {{url_for('home', _external=True)}}  # 'http://localhost:5000/'
                             or   {{url_for('home')}}  # '/'
 
@@ -119,7 +122,7 @@ Moment: Translate UTC(Server) into local time(Client)
         2. insert moment.js into Jinjia2
            {% block scripts %}
            {{ super() }}
-           {{ moment.include_moment()}}
+           {{ moment.include_moment()}}   # python function used directly in .html file
            {% endblock%}
         3. generate new .html to translate UTC into local time
            <p>The local date and time is {{ moment(utc_time).format('LLL')}}</p>
