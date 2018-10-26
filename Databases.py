@@ -99,7 +99,7 @@ sqlite:  # mostly in ios/android app
           5. Before end, close 'Connect'
              cursor.close() 
              conn.close()
-             
+
      tips: Pycharm provide visual operation on Database, if you download derive files and connect to your database
            and you can also directly write 'sql' files to operate the database.         
 '''
@@ -109,11 +109,11 @@ conn = sqlite3.connect('test.db')
 cursor = conn.cursor()
 
 cursor.execute('create table user (id varchar(20) primary key, name varchar(20))')
-cursor.execute('insert into user (id, name) values (?, ?)', ['1','xzq'])
+cursor.execute('insert into user (id, name) values (?, ?)', ['1', 'xzq'])
 print(cursor.rowcount)
 
 # Cursor select from tables, and fetchall data. The returned results is a list and every line of the table is a tuple.
-cursor.execute('select * from user where id=?', ['1',])
+cursor.execute('select * from user where id=?', ['1', ])
 values = cursor.fetchall()
 print(values)
 conn.commit()

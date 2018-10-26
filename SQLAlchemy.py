@@ -27,13 +27,13 @@ from sqlalchemy.ext.declarative import declarative_base
 '''
 engine = Template('${Database_Type}+${Driver}://${user}:${password}@${host}:${port}/${Database}')
 config = {
-    'Database_Type':'mysql',
-    'Driver':'mysqlconnector',
+    'Database_Type': 'mysql',
+    'Driver': 'mysqlconnector',
     'user': 'root',
-    'password':'123456',
-    'host':'127.0.0.1',
-    'port':'3306',
-    'Database':'test'
+    'password': '123456',
+    'host': '127.0.0.1',
+    'port': '3306',
+    'Database': 'test'
 }
 engine = engine.safe_substitute(**config)
 engine = create_engine(engine)
@@ -52,25 +52,25 @@ DBsession = sessionmaker(engine)
            # one to more
            from sqlalchemy.orm import relationship
            from sqlalchemy import ForeignKey
-           
+
            class Parent(Base):
               __tablename__ = 'parent'
               id = Column(Integer, primary_key=True)
               name = Column(String(20))
               child = relationship('child', backref='parent')
-           
+
            class Child(Base):
                __tablename__ = 'child'
                id = Column(Integer, primary_key=True)
                name = Column(String(20))
                parent_id = Column(Integer, ForeignKey('parent.id'))
-               
+
            # more to one
            class Parent(Base):
                __tablename__ = 'parent'
                id = Column(Integer, primary key = True)
                name = Column(String)
-               
+
            class Child(Base):
               __tablename__ = 'child'
               name = Column(String)
@@ -79,29 +79,38 @@ DBsession = sessionmaker(engine)
 '''
 Base = declarative_base()
 
-class User(Base): # the follow table
+
+class User(Base):  # the follow table
     __tablename__ = 'user'
     id = Column(Integer, primary_key=True)
     name = Column(String(20), nullable=False)
     role_id = Column(Integer, ForeignKey('role.id'))
+
     def __repr__(self):
         return '<User %r>' % self.name
+
     __str__ = __repr__
+
 
 class Role(Base):  # the main table
     __tablename__ = 'role'
     id = Column(Integer, primary_key=True)
     name = Column(String(20), unique=True, index=True)
-    user = relationship('user', backref = 'role')
+    user = relationship('user', backref='role')
+
     def __repr__(self):
         return '<Role %r>' % self.name
+
     __str__ = __repr__
 
+
 def init_db():
-   Base.metadata.create_all(engine)    # will create the no existed table
+    Base.metadata.create_all(engine)  # will create the no existed table
+
 
 def drop_db():  # sqlalchemy can't alter table, so if want to alter ,just can drop all tables and revise them.
-    Base.metadata.drop_all(engine)    # will drop all tables
+    Base.metadata.drop_all(engine)  # will drop all tables
+
 
 init_db()
 # drop_db()
@@ -153,29 +162,6 @@ delete: 1. query to get the object to be delete
         2. session.delete(object)
         3. session.commit()
 '''
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 # import os
 # from sqlalchemy import Column, String, create_engine
