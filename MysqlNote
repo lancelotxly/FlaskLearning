@@ -23,7 +23,7 @@ create table if not exist user (id INT primary key, name VARCHAR(20) not null, p
 drop table user;
 增
 insert into user (id, name, phone, score) value (1, 'xzq', '15951917****', 99);
-insert inot user (id, name, score) value (1, 'lxy', 100);
+insert into user (id, name, score) value (1, 'lxy', 100);
 删
 delete from user  # 删除整表
 delete from user where id=1;

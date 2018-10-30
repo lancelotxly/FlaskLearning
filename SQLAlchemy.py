@@ -35,7 +35,7 @@ config = {
     'port': '3306',
     'Database': 'test'
 }
-engine = engine.safe_substitute(**config)
+engine = engine.safe_substitute(**config)  # substitute比较严格，必须每一个占位符都找到对应的变量，不然就会报错，而safe_substitute则会把未找到的$XXX直接输出
 engine = create_engine(engine)
 DBsession = sessionmaker(engine)
 
