@@ -6,8 +6,10 @@ Basic construction of Flask Web app
                    app = Flask(__name__)   # almost __name__, Flask determines the root dir to find the source file through '__name__' 
 '''
 from flask import Flask, request, redirect, abort, make_response
+from flask_script import Manager
 
 app = Flask(__name__)
+manager = Manager(app)
 
 '''
 2. Route and view function:  # route includes url and method
@@ -60,4 +62,4 @@ def Cindy():
                                                   
 '''
 if __name__ == "__main__":
-    app.run()  # default: 127.0.0.1:5000
+    manager.run()  # default: 127.0.0.1:5000

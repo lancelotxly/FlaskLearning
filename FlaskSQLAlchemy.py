@@ -1,6 +1,8 @@
 from string import Template
 from flask import  Flask
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate, MigrateCommand   # Database migrate
+from flask_script import Manager            # the operations of migration  insert into Flask-Script (命令行解释器)
 import os
 
 app = Flask(__name__)
@@ -32,7 +34,10 @@ address = address.substitute(**config)
 app.config['SQLALCHEMY_DATABASE_URI'] = address
 app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
 db = SQLAlchemy(app)
-print(address)
+manager = Manager(app)
+
+migrate = Migrate(app,db)
+manager.add_command('db',MigrateCommand)
 
 '''
  2. Define our object('table') by inheriting from the determined 'Base' class
@@ -92,7 +97,7 @@ class User(db.Model):
         return  '<User %s>' % self.username
     __str__ = __repr__
 
-
+db.drop_all()
 db.create_all()
 
 admin_role = Role(id = 1,name='Admin')
@@ -103,3 +108,7 @@ user_susan = User(username='susan', role = user_role)
 user_david = User(username='david', role = user_role)
 
 db.session.add_all([admin_role, mod_role, user_role, user_john, user_susan, user_david])
+db.session.commit()
+
+if __name__ == '__main__':
+    manager.run()
