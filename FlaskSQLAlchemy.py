@@ -11,7 +11,7 @@ app = Flask(__name__)
        app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
        db = SQLALCHEMY(app)
        
-       address = mysql://username:password@host:port/database
+       address = mysql+mysqlconnector://username:password@host:port/database
                = sqlite:///abspath
 '''
 address = Template('${DataBase_Type}+${Driver}://${Username}:${Password}@${Host}:${Port}/${Database}')
