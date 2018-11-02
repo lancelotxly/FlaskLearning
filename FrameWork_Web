@@ -1,0 +1,21 @@
+Basic construction:
+|- flasky
+ |- app/
+  |- templates/
+  |- static/
+  |- main/
+   |- __init__.py
+   |- errors.py
+   |- forms.py
+   |- views.py
+  |- __init__.py
+  |- email.py         # emil support
+  |- models.py        # Database model
+ |- migrations/
+ |- tests/
+  |- __init__.py
+  |- test.py
+ |- venv/
+ |- requirements.txt   # all requirements modules
+ |- config.py          # config information for setting
+ |- manage.py          # start file
