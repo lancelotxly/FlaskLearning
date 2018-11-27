@@ -29,7 +29,7 @@ HTTP: Based on TCP/IP, server in application layer.
                                      key: value             # parameters
                                  
                    2. POST(post information of user and request resources)
-                      Reques Header:
+                      Request Header:
                       Body:
                       
       HTTP Response:
@@ -44,7 +44,8 @@ HTTP: Based on TCP/IP, server in application layer.
 WSGI(Web Server Gateway Interface): Receive Http request, analysis request, Send Http response
                  
                  1. define application function
-                  e. g.   def application(environ, start_response):
+                    get info from Request and generate Response and Body, and return [Body.encode('utf-8'),]
+                  e. g.   def application(environ, start_response):   # environ is a dict about the request header send by client; start_response('status code', [tuple1,..]) is a function to genertate the response head, tuple('Content-Type','text/html')
                              path = environ['PATH_INFO']
                              start_response('200 0k',[('Content-Type','text/html')])
                              body = '<h1>Hello %s</h1>' % (path[1:] or 'web')
@@ -55,8 +56,14 @@ WSGI(Web Server Gateway Interface): Receive Http request, analysis request, Send
                          httpd = make_server('host', port, application)
                          httpd.server_forever() 
 '''
-def application(environ,start_response):
+# def application(environ, start_response):
+#     path = environ['PATH_INFO']
+#     start_response('200 ok',[('Content-Type','text/html')])
+#     body = '<h1>Hello, %s</h1>' % (path[1:] or 'Cindy')
+#     return [body.encode('utf-8'),]
+
+def application(environ, start_response):
     path = environ['PATH_INFO']
-    start_response('200 0k',[('Content-Type','text/html')])
-    body = '<h1>Hello, %s</h1>' % (path[1:] or 'web')
+    start_response('200 ok',[('Content-Type','text/html')])
+    body = '<h1>Hello, %s</h1>' % (path[1:] or 'Cindy')
     return [body.encode('utf-8')]
