@@ -9,7 +9,7 @@ Flow:
      2. Build link between 'Route' and 'ViewFunction', and define 'ViewFunction',
             where 'Route' is the URL which includes 'URL' and 'methods=GET/POST', 'GET': only request for sources; 'POST': request for sources and post form of client.
             'ViewFunction' is a function which receives the information of client, and generates response (includes Body, Status Code, Header) which can be package by 'make_response'
-             tips: the url map can be obtained by 'app.url_map', which not only include the url we defined and also a 'staticroute', which is a url for staticfile(e.g. .jpg)
+             Tips: the url map can be obtained by 'app.url_map', which not only include the url we defined and also a 'staticroute', which is a url for staticfile(e.g. .jpg)
         @app.route('url',methods=['GET','POST'])
         def ViewFunction():
             body = html

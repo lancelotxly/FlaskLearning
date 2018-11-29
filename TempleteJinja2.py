@@ -1,154 +1,71 @@
 '''
-Template: Generally speaking, it's a .html file which includes
-          {{variable}}  variable could be: list dict object
-                        and can use filter to transform variable, e.g {{ variable | filter }}
-          controller {% %}:
-          {%if %}--{% endif %}; {%for in in list%}--{% endfor %}; {% for key, value in dict.iteritems()%}--{% endfor %}
-          # and template must saved in 'templates.dir'
+MVC(Model View Controller):
+           @app.route('/url',methods=['GET','POST'])
+           def ViewFunction:
+               variable = None
+               ...
+               return render_template('file.html',variable = variable)  # from flask import render_template
+           # where to separate 'data-controller' and 'page-presenter',
+           we further divided 'ViewFunction' into: 'Controller' is the mainer of ViewFunction, and the duty is to deal with the 'Request' from client
+                                                                and generate corresponding 'Model'(e.g. variable) which will be transmitted to 'Viewer'
+                                                    'Viewer' is a Template (e.g. file.html), who get the 'Model' and render html file
 
-Jinjia2: python can be used in .html files directly by import Jinja2
+Template(Jinja2): is a special '.html' file inserted  {{ variable}} and {% Controller %} and the .py can directly insert into the .html file
+                  all templates will be saved into 'templates' (dir)
+                  {{ variable | [filter] }}: where 'variable' includes: obj, list, dict
+                                             filter: safe  # don't translate
+                  {% Controller %}...{% endController %}:  {% if condition%}, {% for in iterable %},
+                                                           {% macro function() %} # function
+                                                           {% import 'macros.html' %} # modules
+                  inherit: {% extend 'base.html' %}
+                           {% block tag %}...{% endblock %}
 
+Bootstrap: Flask-Bootstrap
 
-         like the frameworks of Web， there are many frameworks of templete,
-         and different template has different controller
-         1. controller
-         # if-elif-else
-         {% if condition1%}
-            pass
-         {% elif condition2 %}
-            pass
-         {% else %}
-            pass
-         {% endif %}
+Get dynamic url: from flask import url_for
+                 url_for('ViewFunction', **kwargs, [_external=False/True])  # return the url of 'ViewFunction'
 
-         # for in list
-         {% for i in list %}
-            pass
-         {% endfor %}
-
-         # for key, value in dict
-         {% for key, value in dict.iteritems() %}
-            pass
-         {% endfor %}
-
-
-         2. macro (function)
-         {% macro render_comment(comment) %}
-                 pass
-         {% endmacro %}
-
-         3. modules:
-         {% import 'module.html' as module %}
-         {{module.render_comment()}} # where 'render_comment()' is a macro defined in the module
-
-         4. inheritance
-         <html>
-         <head>
-            {% block head %}
-            <title>{% block title %}{% endblock %}</title>
-            {% end block %}
-         </head>
-         <body>
-             {% block body %}
-             {% endblock %}
-         </body>
-         </html>
-         where the 'block' element can be revised in its child template
-         e. g.
-         {% extends 'base.html' %}
-         {% block title %}my Jinjia2 template {% endblock %}
-         {% block head %}
-           {{ super() }}
-         {% endblock %}
-         {% block body %}
-         <h1>Hello, world</h1>
-         {% endblock %}
-
-
-render:  according to template and variable, create .html file
-         render_template('view.html', variable = value)
-
-generate url in template:  url_for()   #
-                           e.g.  {{url_for('home', _external=True)}}  # 'http://localhost:5000/'
-                            or   {{url_for('home')}}  # '/'
-
-Static file: image, javascript, css--> saved in static.dir
-             1. generate file url:
-                {{url_for('static', filename='name.type')}}
-             2. load resources according to url
+Static file: images, .js, .css
+             url: /static/<filename>     {{ url_for('static',filename='filename')}}
 '''
-
-from flask import Flask, render_template, request
-from flask_bootstrap import Bootstrap   # Flask-Bootstrap: a Client framework used to design Web page
-from flask_moment import Moment         # Flask-Moment: Translate UTC(Server) into local time(Client)
-from datetime import datetime           # datetime.utcnow(): UTC time
+from flask import Flask, render_template
+from flask_bootstrap import Bootstrap
+from flask_moment import Moment
+from datetime import datetime
 
 app = Flask(__name__)
-
-
-
 bootstrap = Bootstrap(app)
 moment = Moment(app)
 
-'''
-Bootstrap: a Client framework used to design Web page
-           1. from flask_bootstrap import Bootstrap  # Flask extension
-           2. bootstrap = Bootstrap(app)
-           
-           tips: these block could be revised.
-                 title, body, navbar, content, scripts, head 
-'''
-# Bootstrap :  {% extends "bootstrap/base.html" %}
-@app.route('/user/<name>',methods=['GET', 'POST'])
-def user(name):
-    return render_template('user.html', name = name)
+@app.route('/<name>',methods=['GET','POST'])
+def Welcome(name):
+    return render_template('welcome.html',name = name)
 
+@app.route('/',methods=['GET','POST'])
+def index():
+    return render_template('index.html',current_time = datetime.utcnow())
 
-# error
-'''
-error 404:   errorhandler(exception code)
-'''
 @app.errorhandler(404)
 def page_not_found(e):
-   return render_template('404.html'), 404
+    return render_template('404.html'), 404
 
-
-# moment
-'''
-Moment: Translate UTC(Server) into local time(Client)
-        1. Flask expansion
-           from flask_moment import Moment
-           moment = Moment(app)
-        2. insert moment.js into Jinjia2
-           {% block scripts %}
-           {{ super() }}
-           {{ moment.include_moment()}}   # python function used directly in .html file
-           {% endblock%}
-        3. generate new .html to translate UTC into local time
-           <p>The local date and time is {{ moment(utc_time).format('LLL')}}</p>
-'''
-@app.route('/moment',methods=['GET','POST'])
-def moment():
-    return render_template('moment.html', current_time = datetime.utcnow())
-
-# login and check out
-@app.route('/',methods=['GET','POST'])
-def home():
-    return render_template('home.html')
-
-@app.route('/signin', methods=['GET', ])
-def form():
-    return render_template('form.html')
-
-@app.route('/signin', methods=['POST', ])
-def sinin():
-    username = request.form['username']
-    password = request.form['password']
-
-    if username == 'xzq' and password == 'Cindy':
-        return render_template('signin_ok.html', username = username)
-    return render_template('form.html', message = 'Bad username or password', username = username)
-
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     app.run()
+
+# # login and check out
+# @app.route('/',methods=['GET','POST'])
+# def home():
+#     return render_template('home.html')
+#
+# @app.route('/signin', methods=['GET', ])
+# def form():
+#     return render_template('form.html')
+#
+# @app.route('/signin', methods=['POST', ])
+# def sinin():
+#     username = request.form['username']
+#     password = request.form['password']
+#
+#     if username == 'xzq' and password == 'Cindy':
+#         return render_template('signin_ok.html', username = username)
+#     return render_template('form.html', message = 'Bad username or password', username = username)
